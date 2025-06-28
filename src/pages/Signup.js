@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Form, FormGroup, Input, Label, Alert, Card, CardBody } from 'reactstrap'
+import { Form, FormGroup, Input, Label, Alert } from 'reactstrap'
 import { FaArrowDown, FaEye, FaEyeSlash } from 'react-icons/fa';
 import "../css/loginform.css"
 import { useAuth } from '../contexts/AuthContext';
@@ -26,9 +26,12 @@ const Signup = () => {
             if (result.error && typeof result.error === 'object' && result.error.errors) {
                 const errors = {};
                 result.error.errors.forEach(err => {
-                    if (err.field) {
-                        errors[err.field] = err.message;
+                    // Map backend field names to form field names
+                    let fieldName = err.field;
+                    if (fieldName === 'displayName') {
+                        fieldName = 'username';
                     }
+                    errors[fieldName] = err.message;
                 });
                 setFieldErrors(errors);
                 setGeneralError(result.error.message || 'Registration failed. Please check the errors below.');
@@ -82,18 +85,18 @@ const Signup = () => {
                                     type="text" 
                                     style={{
                                         borderRadius: "50px",
-                                        borderColor: isFieldInvalid('displayName') ? '#dc3545' : undefined
+                                        borderColor: isFieldInvalid('username') ? '#dc3545' : undefined
                                     }}
                                     required
                                     disabled={loading}
-                                    invalid={isFieldInvalid('displayName')}
+                                    invalid={isFieldInvalid('username')}
                                 />
                                 <Label for="username">
                                     Choose a Nickname...
                                 </Label>
-                                {getFieldError('displayName') && (
+                                {getFieldError('username') && (
                                     <div style={{ color: '#dc3545', fontSize: '0.875rem', marginTop: '5px' }}>
-                                        {getFieldError('displayName')}
+                                        {getFieldError('username')}
                                     </div>
                                 )}
                             </FormGroup>
@@ -148,7 +151,8 @@ const Signup = () => {
                                             background: 'none',
                                             border: 'none',
                                             color: '#6c757d',
-                                            cursor: 'pointer'
+                                            cursor: 'pointer',
+                                            zIndex: 10
                                         }}
                                         onClick={() => setShowPassword(!showPassword)}
                                     >
@@ -165,24 +169,6 @@ const Signup = () => {
                                 )}
                             </FormGroup>
                             {' '}
-                            
-                            {/* Password Requirements Card */}
-                            <Card style={{ 
-                                backgroundColor: 'rgba(255,255,255,0.1)', 
-                                border: '1px solid rgba(255,255,255,0.2)',
-                                marginBottom: '20px'
-                            }}>
-                                <CardBody style={{ padding: '15px' }}>
-                                    <h6 style={{ color: 'white', marginBottom: '10px' }}>Password Requirements:</h6>
-                                    <ul style={{ color: 'white', fontSize: '0.875rem', margin: 0, paddingLeft: '20px' }}>
-                                        <li>At least 8 characters long</li>
-                                        <li>One uppercase letter (A-Z)</li>
-                                        <li>One lowercase letter (a-z)</li>
-                                        <li>One number (0-9)</li>
-                                        <li>One special character (@$!%*?&)</li>
-                                    </ul>
-                                </CardBody>
-                            </Card>
                             
                             <div className='submit-container'>
                                 <button 

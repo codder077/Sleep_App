@@ -38,33 +38,19 @@ const handleValidationErrors = (req, res, next) => {
   next();
 };
 
-// Enhanced password validation with specific requirements
+// Simple password validation - only requires non-empty
 const validatePassword = (fieldName = 'password') => {
   return body(fieldName)
-    .isLength({ min: 8 })
-    .withMessage('Password must be at least 8 characters long')
-    .matches(/^(?=.*[a-z])/)
-    .withMessage('Password must contain at least one lowercase letter (a-z)')
-    .matches(/^(?=.*[A-Z])/)
-    .withMessage('Password must contain at least one uppercase letter (A-Z)')
-    .matches(/^(?=.*\d)/)
-    .withMessage('Password must contain at least one number (0-9)')
-    .matches(/^(?=.*[@$!%*?&])/)
-    .withMessage('Password must contain at least one special character (@$!%*?&)')
-    .matches(/^[a-zA-Z0-9@$!%*?&]{8,}$/)
-    .withMessage('Password can only contain letters, numbers, and special characters (@$!%*?&)');
+    .notEmpty()
+    .withMessage('Password is required');
 };
 
-// User registration validation with enhanced error messages
+// User registration validation with minimal constraints
 const validateRegistration = [
   body('displayName')
     .trim()
     .notEmpty()
-    .withMessage('Display name is required')
-    .isLength({ min: 2, max: 32 })
-    .withMessage('Display name must be between 2 and 32 characters')
-    .matches(/^[a-zA-Z0-9\s]+$/)
-    .withMessage('Display name can only contain letters, numbers, and spaces'),
+    .withMessage('Display name is required'),
   
   body('email')
     .trim()
@@ -186,10 +172,8 @@ const validateProfileUpdate = [
   body('displayName')
     .optional()
     .trim()
-    .isLength({ min: 2, max: 32 })
-    .withMessage('Display name must be between 2 and 32 characters')
-    .matches(/^[a-zA-Z0-9\s]+$/)
-    .withMessage('Display name can only contain letters, numbers, and spaces'),
+    .notEmpty()
+    .withMessage('Display name cannot be empty'),
   
   body('phoneCode')
     .optional()

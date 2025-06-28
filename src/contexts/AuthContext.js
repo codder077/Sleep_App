@@ -54,8 +54,21 @@ export const AuthProvider = ({ children }) => {
         return { success: false, error: response.message };
       }
     } catch (error) {
-      setError(error.message || 'Login failed');
-      return { success: false, error: error.message };
+      // Handle detailed validation errors
+      if (error.validationErrors && Object.keys(error.validationErrors).length > 0) {
+        const validationError = {
+          message: error.message || 'Validation failed. Please check the following fields:',
+          errors: Object.entries(error.validationErrors).map(([field, message]) => ({
+            field,
+            message
+          }))
+        };
+        setError(validationError.message);
+        return { success: false, error: validationError };
+      } else {
+        setError(error.message || 'Login failed');
+        return { success: false, error: error.message };
+      }
     }
   };
 
@@ -71,8 +84,21 @@ export const AuthProvider = ({ children }) => {
         return { success: false, error: response.message };
       }
     } catch (error) {
-      setError(error.message || 'Registration failed');
-      return { success: false, error: error.message };
+      // Handle detailed validation errors
+      if (error.validationErrors && Object.keys(error.validationErrors).length > 0) {
+        const validationError = {
+          message: error.message || 'Validation failed. Please check the following fields:',
+          errors: Object.entries(error.validationErrors).map(([field, message]) => ({
+            field,
+            message
+          }))
+        };
+        setError(validationError.message);
+        return { success: false, error: validationError };
+      } else {
+        setError(error.message || 'Registration failed');
+        return { success: false, error: error.message };
+      }
     }
   };
 

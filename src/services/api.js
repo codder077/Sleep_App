@@ -42,7 +42,19 @@ class ApiService {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || data.message || 'API request failed');
+        // Log detailed error information for debugging
+        console.log('API Error Response:', {
+          status: response.status,
+          statusText: response.statusText,
+          data: data
+        });
+        
+        // Create a more detailed error with validation details
+        const error = new Error(data.error || data.message || 'API request failed');
+        error.status = response.status;
+        error.data = data;
+        error.validationErrors = data.errors || data.validationErrors || {};
+        throw error;
       }
 
       return data;
